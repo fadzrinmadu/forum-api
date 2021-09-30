@@ -35,6 +35,11 @@ DomainErrorTranslator._directories = {
     new InvariantError('tidak dapat menambahkan thread baru karena properti yang dibutuhkan tidak ada'),
   'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION':
     new InvariantError('tidak dapat menambahkan thread baru karena tipe data tidak sesuai'),
+
+  'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY':
+    new InvariantError('tidak dapat menambahkan comment baru karena properti yang dibutuhkan tidak ada'),
+  'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION':
+    new InvariantError('tidak dapat menambahkan comment baru karena tipe data tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;
