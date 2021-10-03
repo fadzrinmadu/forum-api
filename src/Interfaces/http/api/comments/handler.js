@@ -14,7 +14,7 @@ class CommentsHandler {
     const { threadId } = request.params;
     const addCommentUseCase = this._container.getInstance(AddCommentUseCase.name);
 
-    const addedComment = await addCommentUseCase.execute(request.payload, owner, threadId);
+    const addedComment = await addCommentUseCase.execute(request.payload, { owner, threadId });
 
     const response = h.response({
       status: 'success',
@@ -32,7 +32,7 @@ class CommentsHandler {
     const { threadId, commentId } = request.params;
     const deleteCommentUseCase = this._container.getInstance(DeleteCommentUseCase.name);
 
-    await deleteCommentUseCase.execute(commentId, owner, threadId);
+    await deleteCommentUseCase.execute(commentId, { owner, threadId });
 
     const response = h.response({
       status: 'success',

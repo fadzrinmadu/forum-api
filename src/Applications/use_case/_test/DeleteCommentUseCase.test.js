@@ -28,7 +28,7 @@ describe('DeleteCommentUseCase', () => {
     });
 
     // Action
-    await deleteCommentUseCase.execute(commentId, owner, threadId);
+    await deleteCommentUseCase.execute(commentId, { owner, threadId });
 
     // Assert
     expect(mockThreadRepository.getThreadById).toBeCalledWith(threadId);
