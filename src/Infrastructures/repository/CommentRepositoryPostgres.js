@@ -1,5 +1,6 @@
 const CommentRepository = require('../../Domains/comments/CommentRepository');
 const AddedComment = require('../../Domains/comments/entities/AddedComment');
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
@@ -24,6 +25,26 @@ class CommentRepositoryPostgres extends CommentRepository {
     const result = await this._pool.query(query);
 
     return new AddedComment({ ...result.rows[0] });
+  }
+
+  async getCommentByThreadId(id) {
+    const query = {
+      text: 'SELECT comments.*, users.username AS username FROM comments INNER JOIN users ON comments.owner = users.id WHERE thread_id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Comment tidak ditemukan');
+    }
+
+    return result.rows.map((row) => (
+      new DetailComment({
+        ...row,
+        isDelete: row.is_delete,
+      })
+    ));
   }
 
   async deleteCommentById(id) {

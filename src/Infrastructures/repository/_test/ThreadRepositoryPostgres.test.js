@@ -50,7 +50,7 @@ describe('ThreadRepositoryPostgres', () => {
         .rejects.toThrow(NotFoundError);
     });
 
-    it('should not throw InvariantError when thread available', async () => {
+    it('should not throw NotFoundError when thread available', async () => {
       // Arrange
       const threadId = 'thread-123';
       const owner = 'user-123';
@@ -59,9 +59,6 @@ describe('ThreadRepositoryPostgres', () => {
 
       await UsersTableTestHelper.addUser({ id: owner });
       await ThreadsTableTestHelper.addThread({ id: threadId });
-
-      // Action
-      const thread = await threadRepositoryPostgres.getThreadById(threadId);
 
       // Assert
       await expect(threadRepositoryPostgres.getThreadById(threadId))

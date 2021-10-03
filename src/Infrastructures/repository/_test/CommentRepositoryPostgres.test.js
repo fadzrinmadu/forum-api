@@ -41,6 +41,34 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
+  describe('getCommentByThreadId function', () => {
+    it('should throw NotFoundError when comment not available', async () => {
+      // Arrange
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(commentRepositoryPostgres.getCommentByThreadId('thread-123'))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when thread available', async () => {
+      // Arrange
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+      const owner = 'user-123';
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await UsersTableTestHelper.addUser({ id: owner });
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+      await CommentsTableTestHelper.addCommentByThreadId({ id: commentId }, owner, threadId);
+
+      // Assert
+      await expect(commentRepositoryPostgres.getCommentByThreadId(threadId))
+        .resolves.not.toThrow(NotFoundError);
+    });
+  });
+
   describe('deleteCommentById function', () => {
     it('should throw error when comment is not exists', async () => {
       // Arrange
