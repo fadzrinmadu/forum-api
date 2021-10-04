@@ -25,6 +25,7 @@ describe('/threads endpoint', () => {
       const requestPayload = {
         title: 'payload title',
         body: 'payload body',
+        owner,
       };
 
       await UsersTableTestHelper.addUser({ id: owner });

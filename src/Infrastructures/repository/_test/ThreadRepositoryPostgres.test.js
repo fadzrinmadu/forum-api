@@ -24,6 +24,7 @@ describe('ThreadRepositoryPostgres', () => {
       const newThread = new NewThread({
         title: 'payload title',
         body: 'payload body',
+        owner,
       });
 
       const fakeIdGenerator = () => '123'; // stub!
@@ -32,7 +33,7 @@ describe('ThreadRepositoryPostgres', () => {
       await UsersTableTestHelper.addUser({ id: owner });
 
       // Action
-      await threadRepositoryPostgres.addThread(newThread, owner);
+      await threadRepositoryPostgres.addThread(newThread);
 
       // Assert
       const threads = await ThreadsTableTestHelper.findThreadsById('thread-123');
