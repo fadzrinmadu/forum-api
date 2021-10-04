@@ -6,6 +6,31 @@ const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 const GetDetailThreadUseCase = require('../GetDetailThreadUseCase');
 
 describe('GetDetailThreadUseCase', () => {
+  it('should throw error when payload not contain needed property', async () => {
+    // Arrange
+    const useCasePayload = {};
+    const getDetailThreadUseCase = new GetDetailThreadUseCase({});
+
+    // Action & Assert
+    await expect(getDetailThreadUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('GET_DETAIL_THREAD_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY');
+  });
+
+  it('should throw error when payload not meet data type specification', async () => {
+    // Arrange
+    const useCasePayload = {
+      threadId: 123,
+    };
+
+    const getDetailThreadUseCase = new GetDetailThreadUseCase({});
+
+    // Action & Assert
+    await expect(getDetailThreadUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('GET_DETAIL_THREAD_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION');
+  });
+
   it('should orchestrating GetDetailThreadUseCase correctly', async () => {
     // Arrange
     const threadId = 'thread-123';
@@ -62,7 +87,7 @@ describe('GetDetailThreadUseCase', () => {
     });
 
     // Action
-    const detailThread = await getDetailThreadUseCase.execute(threadId);
+    const detailThread = await getDetailThreadUseCase.execute({ threadId });
 
     // Assert
     expect(detailThread).toStrictEqual(expectedDetailThread);
