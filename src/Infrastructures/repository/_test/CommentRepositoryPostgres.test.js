@@ -22,8 +22,11 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const threadId = 'thread-123';
       const owner = 'user-123';
+
       const newComment = {
         content: 'payload content',
+        owner,
+        threadId,
       };
 
       const fakeIdGenerator = () => '123'; // stub
@@ -33,7 +36,7 @@ describe('CommentRepositoryPostgres', () => {
       await ThreadsTableTestHelper.addThread({ id: threadId, owner });
 
       // Action
-      await commentRepositoryPostgres.addCommentByThreadId(newComment, owner, threadId);
+      await commentRepositoryPostgres.addCommentByThreadId(newComment);
 
       // Assert
       const comments = await CommentsTableTestHelper.findCommentsById('comment-123');

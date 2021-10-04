@@ -7,16 +7,16 @@ const AddCommentUseCase = require('../AddCommentUseCase');
 describe('AddCommentUseCase', () => {
   it('should orchestrating the add comment action correctly', async () => {
     // Arrange
-    const owner = 'user-123';
-    const threadId = 'thread-123';
     const useCasePayload = {
       content: 'payload content',
+      owner: 'user-123',
+      threadId: 'thread-123',
     };
 
     const expectedAddedComment = new AddedComment({
       id: 'comment-123',
       content: useCasePayload.content,
-      owner,
+      owner: useCasePayload.owner,
     });
 
     /** creating dependency of use case */
@@ -37,13 +37,15 @@ describe('AddCommentUseCase', () => {
     });
 
     // Action
-    const addedComment = await addCommentUseCase.execute(useCasePayload, { owner, threadId });
+    const addedComment = await addCommentUseCase.execute(useCasePayload);
 
     // Assert
     expect(addedComment).toStrictEqual(expectedAddedComment);
-    expect(mockThreadRepository.getThreadById).toBeCalledWith(threadId);
+    expect(mockThreadRepository.getThreadById).toBeCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.addCommentByThreadId).toBeCalledWith(new NewComment({
       content: useCasePayload.content,
-    }), owner, threadId);
+      owner: useCasePayload.owner,
+      threadId: useCasePayload.threadId,
+    }));
   });
 });
