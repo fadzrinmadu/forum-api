@@ -1,5 +1,5 @@
 class CommentRepository {
-  async addCommentByThreadId(newComment, owner, threadId) {
+  async addCommentByThreadId(newComment) {
     throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 

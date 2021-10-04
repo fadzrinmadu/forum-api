@@ -13,7 +13,10 @@ describe('NewReply entities', () => {
   it('should throw error when payload not meet data type specification', () => {
     // Arrange
     const payload = {
-      content: 12,
+      content: 123,
+      owner: 123,
+      threadId: 123,
+      commentId: 123,
     };
 
     // Action & Assert
@@ -25,6 +28,9 @@ describe('NewReply entities', () => {
     // Assert
     const payload = {
       content: 'payload content',
+      owner: 'user-123',
+      threadId: 'thread-123',
+      commentId: 'comment-123',
     };
 
     // Action
@@ -32,5 +38,8 @@ describe('NewReply entities', () => {
 
     // Arrange
     expect(newReply.content).toEqual(payload.content);
+    expect(newReply.owner).toEqual(payload.owner);
+    expect(newReply.threadId).toEqual(payload.threadId);
+    expect(newReply.commentId).toEqual(payload.commentId);
   });
 });

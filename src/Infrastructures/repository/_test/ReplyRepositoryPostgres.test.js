@@ -22,11 +22,15 @@ describe('ReplyRepositoryPostgres', () => {
   describe('addReplyByCommentId function', () => {
     it('should persist add reply', async () => {
       // Arrange
+      const owner = 'user-123';
       const threadId = 'thread-123';
       const commentId = 'comment-123';
-      const owner = 'user-123';
+
       const newReply = {
         content: 'payload content',
+        owner,
+        threadId,
+        commentId,
       };
 
       const fakeIdGenerator = () => '123'; // stub
@@ -37,7 +41,7 @@ describe('ReplyRepositoryPostgres', () => {
       await CommentsTableTestHelper.addCommentByThreadId({ id: commentId }, owner, threadId);
 
       // Action
-      await replyRepositoryPostgres.addReplyByCommentId(newReply, owner, commentId);
+      await replyRepositoryPostgres.addReplyByCommentId(newReply);
 
       // Assert
       const replies = await RepliesTableTestHelper.findRepliesById('reply-123');

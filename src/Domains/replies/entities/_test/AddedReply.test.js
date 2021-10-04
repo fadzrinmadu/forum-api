@@ -3,9 +3,7 @@ const AddedReply = require('../AddedReply');
 describe('AddedReply entities', () => {
   it('should throw error when payload not contain needed property', () => {
     // Arrange
-    const payload = {
-      id: 'reply-123',
-    };
+    const payload = {};
 
     // Action & Assert
     expect(() => new AddedReply(payload))
@@ -15,9 +13,9 @@ describe('AddedReply entities', () => {
   it('should throw error when payload not meet data type specification', () => {
     // Arrange
     const payload = {
-      id: 1,
-      content: 12,
-      owner: {},
+      id: 123,
+      content: 123,
+      owner: 123,
     };
 
     // Action & Assert
