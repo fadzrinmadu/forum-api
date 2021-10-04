@@ -4,6 +4,7 @@ const createServer = require('../createServer');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
@@ -14,6 +15,7 @@ describe('/threads endpoint', () => {
     await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
+    await RepliesTableTestHelper.cleanTable();
   });
 
   describe('when POST /threads', () => {
@@ -59,6 +61,7 @@ describe('/threads endpoint', () => {
       await ThreadsTableTestHelper.addThread({ id: threadId, owner });
       await CommentsTableTestHelper.addCommentByThreadId({ id: 'comment-123' }, owner, threadId);
       await CommentsTableTestHelper.addCommentByThreadId({ id: 'comment-321', isDelete: true }, owner, threadId);
+      // await RepliesTableTestHelper.addReplyByCommentId()
 
       // Action
       const server = await createServer(container);

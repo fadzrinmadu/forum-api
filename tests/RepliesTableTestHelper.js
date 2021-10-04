@@ -3,7 +3,7 @@
 const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const RepliesTableTestHelper = {
-  async addReplyByThreadId({
+  async addReplyByCommentId({
     id = 'reply-123',
     content = 'payload content',
     date = '2011-10-05T14:48:00.000Z',
