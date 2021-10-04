@@ -2,6 +2,7 @@ const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const DetailReply = require('../../Domains/replies/entities/DetailReply');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -26,10 +27,10 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return new AddedReply({ ...result.rows[0] });
   }
 
-  async getReplyByCommentId(commentId) {
+  async getReplyByCommentId(id) {
     const query = {
       text: 'SELECT replies.*, users.username AS username FROM replies INNER JOIN users ON replies.owner = users.id WHERE comment_id = $1 ORDER BY date',
-      values: [commentId],
+      values: [id],
     };
 
     const result = await this._pool.query(query);
@@ -40,6 +41,40 @@ class ReplyRepositoryPostgres extends ReplyRepository {
         isDelete: row.is_delete,
       })
     ));
+  }
+
+  async deleteReplyById(id) {
+    const isDelete = true;
+
+    const query = {
+      text: 'UPDATE replies SET is_delete = $1 WHERE id = $2 RETURNING id',
+      values: [isDelete, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Gagal menghapus reply. Id tidak ditemukan');
+    }
+  }
+
+  async verifyReplyOwner(id, owner) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Reply tidak ditemukan');
+    }
+
+    const reply = result.rows[0];
+
+    if (reply.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses resources ini');
+    }
   }
 }
 

@@ -51,7 +51,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
   });
 
   describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
-    it('should response 200 and deleted comment', async () => {
+    it('should response 200 and delete comment', async () => {
       // Arrange
       const threadId = 'thread-123';
       const owner = 'user-123';
@@ -78,9 +78,6 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
-
-      const comments = await CommentsTableTestHelper.findCommentsById(commentId);
-      expect(comments).toHaveLength(1);
     });
   });
 });
