@@ -24,6 +24,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const threadId = 'thread-123';
       const commentId = 'comment-123';
       const owner = 'user-123';
+
       const requestPayload = {
         content: 'payload content',
       };

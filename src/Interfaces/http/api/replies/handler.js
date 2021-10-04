@@ -37,7 +37,12 @@ class RepliesHandler {
     const { threadId, commentId, replyId } = request.params;
     const deleteReplyUseCase = this._container.getInstance(DeleteReplyUseCase.name);
 
-    await deleteReplyUseCase.execute(replyId, { owner, threadId, commentId });
+    await deleteReplyUseCase.execute({
+      replyId,
+      owner,
+      threadId,
+      commentId,
+    });
 
     const response = h.response({
       status: 'success',
