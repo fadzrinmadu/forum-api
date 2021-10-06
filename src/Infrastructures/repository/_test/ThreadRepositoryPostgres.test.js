@@ -17,6 +17,32 @@ describe('ThreadRepositoryPostgres', () => {
     await pool.end();
   });
 
+  describe('verifyAvailableThread function', () => {
+    it('should throw NotFoundError error when thread is not available', async () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.verifyAvailableThread('thread-123'))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when thread available', async () => {
+      // Arrange
+      const threadId = 'thread-123';
+      const owner = 'user-123';
+
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+
+      await UsersTableTestHelper.addUser({ id: owner });
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+
+      // Assert
+      await expect(threadRepositoryPostgres.verifyAvailableThread(threadId))
+        .resolves.not.toThrow(NotFoundError);
+    });
+  });
+
   describe('addThread function', () => {
     it('should persist add thread', async () => {
       // Arrange
@@ -51,7 +77,7 @@ describe('ThreadRepositoryPostgres', () => {
         .rejects.toThrow(NotFoundError);
     });
 
-    it('should not throw NotFoundError when thread available', async () => {
+    it('should return thread when thread is available', async () => {
       // Arrange
       const threadId = 'thread-123';
       const owner = 'user-123';
@@ -61,9 +87,17 @@ describe('ThreadRepositoryPostgres', () => {
       await UsersTableTestHelper.addUser({ id: owner });
       await ThreadsTableTestHelper.addThread({ id: threadId });
 
+      // Action
+      const thread = await threadRepositoryPostgres.getThreadById(threadId);
+
       // Assert
       await expect(threadRepositoryPostgres.getThreadById(threadId))
         .resolves.not.toThrow(NotFoundError);
+      expect(thread).toHaveProperty('id');
+      expect(thread).toHaveProperty('title');
+      expect(thread).toHaveProperty('body');
+      expect(thread).toHaveProperty('username');
+      expect(thread).toHaveProperty('date');
     });
   });
 });
