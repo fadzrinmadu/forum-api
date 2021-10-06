@@ -11,6 +11,19 @@ class CommentRepositoryPostgres extends CommentRepository {
     this._idGenerator = idGenerator;
   }
 
+  async verifyAvailableComment(id) {
+    const query = {
+      text: 'SELECT * FROM comments WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Comment tidak ditemukan');
+    }
+  }
+
   async addCommentByThreadId(newComment) {
     const { content, owner, threadId } = newComment;
     const id = `comment-${this._idGenerator()}`;

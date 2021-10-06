@@ -1,4 +1,8 @@
 class CommentRepository {
+  async verifyAvailableComment(id) {
+    throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async addCommentByThreadId(newComment) {
     throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
