@@ -49,26 +49,30 @@ describe('ReplyRepositoryPostgres', () => {
     });
   });
 
-  describe('getReplyByCommentId function', () => {
-    it('should return replies by comment id', async () => {
-      // Arrange
-      const threadId = 'thread-123';
-      const commentId = 'comment-123';
-      const replyId = 'reply-123';
+  describe('getReplyByCommentIds function', () => {
+    it('should return replies by comment ids', async () => {
       const owner = 'user-123';
+      const threadId = 'thread-123';
+      const commentIds = ['comment-123', 'comment-124'];
+      const replyIds = ['reply-123', 'reply-124', 'reply-125'];
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
       await UsersTableTestHelper.addUser({ id: owner });
       await ThreadsTableTestHelper.addThread({ id: threadId });
-      await CommentsTableTestHelper.addCommentByThreadId({ id: commentId }, owner, threadId);
-      await RepliesTableTestHelper.addReplyByCommentId({ id: replyId }, owner, commentId);
+
+      await CommentsTableTestHelper.addCommentByThreadId({ id: commentIds[0] }, owner, threadId);
+      await CommentsTableTestHelper.addCommentByThreadId({ id: commentIds[1] }, owner, threadId);
+
+      await RepliesTableTestHelper.addReplyByCommentId({ id: replyIds[0] }, owner, commentIds[0]);
+      await RepliesTableTestHelper.addReplyByCommentId({ id: replyIds[1] }, owner, commentIds[0]);
+      await RepliesTableTestHelper.addReplyByCommentId({ id: replyIds[2] }, owner, commentIds[1]);
 
       // Action
-      const reply = await replyRepositoryPostgres.getReplyByCommentId(commentId);
+      const replies = await replyRepositoryPostgres.getReplyByCommentIds(commentIds);
 
       // Assert
-      expect(reply).toHaveLength(1);
+      expect(replies).toHaveLength(3);
     });
   });
 
