@@ -1,3 +1,6 @@
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
+const DetailReply = require('../../Domains/replies/entities/DetailReply');
+
 class GetDetailThreadUseCase {
   constructor({
     threadRepository,
@@ -16,22 +19,37 @@ class GetDetailThreadUseCase {
 
     const { threadId } = useCasePayload;
     const thread = await this._threadRepository.getThreadById(threadId);
-    const comments = await this._commentRepository.getCommentByThreadId(threadId);
 
-    const commentsReplies = await Promise.all(comments.map(async (comment) => {
-      const replies = await this._replyRepository.getReplyByCommentId(comment.id);
-      const likeCount = await this._likeRepository.getLikeCountByCommentId(comment.id);
+    const comments = await this._commentRepository.getCommentByThreadId(threadId);
+    const commentIds = comments.map((comment) => comment.id);
+
+    const replies = await this._replyRepository.getReplyByCommentIds(commentIds);
+    const likes = await this._likeRepository.getLikeByCommentIds(commentIds);
+
+    const commentsThread = comments.map((comment) => {
+      const commentReplies = replies.filter((reply) => reply.comment_id === comment.id);
+      const commentLikesCount = likes.filter((like) => like.comment_id === comment.id).length;
+
+      const detailComment = new DetailComment({
+        ...comment,
+        isDelete: comment.is_delete,
+      });
+
+      const detailReplies = commentReplies.map((reply) => new DetailReply({
+        ...reply,
+        isDelete: reply.is_delete,
+      }));
 
       return {
-        ...comment,
-        likeCount,
-        replies,
+        ...detailComment,
+        likeCount: commentLikesCount,
+        replies: detailReplies,
       };
-    }));
+    });
 
     return {
       ...thread,
-      comments: commentsReplies,
+      comments: commentsThread,
     };
   }
 

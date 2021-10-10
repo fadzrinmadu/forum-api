@@ -29,15 +29,15 @@ class LikeRepositoryPostgres extends LikeRepository {
     await this._pool.query(query);
   }
 
-  async getLikeCountByCommentId(commentId) {
+  async getLikeByCommentIds(commentIds) {
     const query = {
-      text: 'SELECT * FROM likes WHERE comment_id = $1',
-      values: [commentId],
+      text: 'SELECT * FROM likes WHERE comment_id = ANY($1::text[])',
+      values: [commentIds],
     };
 
     const result = await this._pool.query(query);
 
-    return result.rowCount;
+    return result.rows;
   }
 
   async deleteLikeByCommentId(commentId, owner) {

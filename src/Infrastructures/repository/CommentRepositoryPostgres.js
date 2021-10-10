@@ -63,12 +63,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const result = await this._pool.query(query);
 
-    return result.rows.map((row) => (
-      new DetailComment({
-        ...row,
-        isDelete: row.is_delete,
-      })
-    ));
+    return result.rows;
   }
 
   async deleteCommentById(id) {

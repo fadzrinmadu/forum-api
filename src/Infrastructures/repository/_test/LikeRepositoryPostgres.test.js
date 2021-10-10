@@ -60,6 +60,50 @@ describe('LikeRepositoryPostgres', () => {
     });
   });
 
+  describe('getLikeByCommentIds function', () => {
+    it('should return like by comment ids', async () => {
+      const owners = ['user-123', 'user-124'];
+      const threadId = 'thread-123';
+      const commentIds = ['comment-123', 'comment-124'];
+      const likeIds = ['like-123', 'like-124', 'like-125'];
+
+      const likeRepositoryPostgres = new LikeRepositoryPostgres(pool, {});
+
+      await UsersTableTestHelper.addUser({ id: owners[0], username: 'dicoding' });
+      await UsersTableTestHelper.addUser({ id: owners[1], username: 'aan' });
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+
+      await CommentsTableTestHelper
+        .addCommentByThreadId({ id: commentIds[0] }, owners[0], threadId);
+      await CommentsTableTestHelper
+        .addCommentByThreadId({ id: commentIds[1] }, owners[1], threadId);
+
+      await LikesTableTestHelper.addLikeComment({
+        id: likeIds[0],
+        owner: owners[0],
+        commentId: commentIds[0],
+      });
+
+      await LikesTableTestHelper.addLikeComment({
+        id: likeIds[1],
+        owner: owners[1],
+        commentId: commentIds[0],
+      });
+
+      await LikesTableTestHelper.addLikeComment({
+        id: likeIds[2],
+        owner: owners[0],
+        commentId: commentIds[1],
+      });
+
+      // Action
+      const likes = await likeRepositoryPostgres.getLikeByCommentIds(commentIds);
+
+      // Assert
+      expect(likes).toHaveLength(3);
+    });
+  });
+
   describe('addLikeByCommentId function', () => {
     it('should persist add like comment', async () => {
       // Arrange
